@@ -12,21 +12,21 @@ public class MemoryPlugin implements GamePlugin {
     private static String GAME_NAME = "Memory";
 
     // Invariant: GRID_WIDTH * GRID_HEIGHT % 2 == 0.
-    private static int GRID_WIDTH = 4;
-    private static int GRID_HEIGHT = 4;
+    private static final int GRID_WIDTH = 4;
+    private static final int GRID_HEIGHT = 4;
 
     // Invariant: 2 * WORDS.length == GRID_HEIGHT * GRID_WIDTH.
-    private static String[] WORDS =
+    private static final String[] WORDS =
             { "Apple", "Boat", "Car", "Dog", "Eagle", "Fish", "Giraffe", "Helicopter" };
 
-    private static String SELECT_FIRST_CARD_MSG = "Select first card.";
-    private static String SELECT_SECOND_CARD_MSG = "Select second card.";
-    private static String MATCH_FOUND_MSG = "You found a match!";
-    private static String MATCH_NOT_FOUND_MSG = "Match not found.";
-    private static String PLAYER_WON_MSG = "All pairs found, %s won the game!";
+    private static final String SELECT_FIRST_CARD_MSG = "Select first card.";
+    private static final String SELECT_SECOND_CARD_MSG = "Select second card.";
+    private static final String MATCH_FOUND_MSG = "You found a match!";
+    private static final String MATCH_NOT_FOUND_MSG = "Match not found.";
+    private static final String PLAYER_WON_MSG = "All pairs found, %s won the game!";
 
     private GameFramework framework;
-    private ArrayList<String> cards = new ArrayList<String>();
+    private ArrayList<String> cards = new ArrayList<>();
     private int firstFaceUpX, firstFaceUpY;
     private int secondFaceUpX, secondFaceUpY;
     private boolean lastMatch;
@@ -49,6 +49,7 @@ public class MemoryPlugin implements GamePlugin {
     }
 
     public void onRegister(GameFramework f) {
+        if(f == null) throw new NullPointerException("GameFramework f is null")
         framework = f;
         for (String word : WORDS) {
             cards.add(word);
@@ -62,7 +63,10 @@ public class MemoryPlugin implements GamePlugin {
         Iterator<String> it = cards.iterator();
         for(int y = 0; y < GRID_HEIGHT; y++) {
             for (int x =0; x < GRID_WIDTH; x++) {
-                internalGameGrid[y][x] = it.next();
+                if(it.hasNext())
+                    internalGameGrid[y][x] = it.next();
+                else
+                    throw new IndexOutOfBoundsException("it out of boundary.");
             }
         }
         numCardsFaceDown = GRID_HEIGHT * GRID_WIDTH;
